@@ -51,6 +51,47 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+async function showMealDetails(mealId) {
+    myData.innerHTML = "";
+    $(".inner-loading-screen").fadeIn(300);
+
+    try {
+        let response = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`);
+        response = await response.json();
+
+        if (response.meals && response.meals.length > 0) {
+            const meal = response.meals[0];
+            myData.innerHTML = `
+                <div class="meal-details text-white d-flex">
+                    <div class="col-md-4 me-3">
+                        <h2>${meal.strMeal}</h2>
+                        <img src="${meal.strMealThumb}" alt="${meal.strMeal}" class="w-100 rounded-3">
+                    </div>
+                    <div class="col-md-8">
+                        <h3>Instructions:</h3>
+                        <p>${meal.strInstructions}</p>
+                        <h3>Ingredients:</h3>
+                        <ul>
+                            ${Object.keys(meal).filter(key => key.startsWith('strIngredient') && meal[key]).map(key => `<li>${meal[key]}</li>`).join('')}
+                        </ul>
+                       <h3>Tags:</h3>
+                        <p>${meal.strTags ? meal.strTags.split(',').map(tag => `<span class="badge bg-primary me-1">${tag.trim()}</span>`).join(' ') : 'No tags available.'}</p>
+                    <h3>Source:</h3>
+                        <a target="_blank" href="${meal.strSource}" class="btn btn-success">Source</a>
+                <a target="_blank" href="${meal.strYoutube}" class="btn btn-danger">Youtube</a>
+                        </div>
+                </div>`;
+        } else {
+            myData.innerHTML = '<p>No meal details found.</p>';
+        }
+    } catch (error) {
+        console.error('Error fetching meal details:', error);
+        myData.innerHTML = '<p>Error fetching meal details. Please try again.</p>';
+    } finally {
+        $(".inner-loading-screen").fadeOut(300);
+    }
+}
+
 
 // Categories
 
@@ -151,7 +192,7 @@ function displayArea() {
     let cartoona = "";
     for (let i = 0; i < data.length; i++) {
         cartoona += `
-        <div class="col-md-3 text-white">
+        <div class="col-md-3 text-white border-2">
             <div onclick="getAreaMeals('${data[i].strArea}')" class="rounded-2 text-center cursor-pointer">
                 <i class="fa-solid fa-house-laptop fa-4x"></i>
                 <h3>${data[i].strArea}</h3>
@@ -320,7 +361,7 @@ function displayMeals(meals) {
     for (let i = 0; i < meals.length; i++) {
         cartona += `
             <div class="col-md-3">
-                <div class="image-container mb-3 rounded-3">
+                <div class="image-container mb-3 rounded-3" onclick="showMealDetails('${meals[i].idMeal}')">
                     <img src="${meals[i].strMealThumb}" class="card-img-top" alt="${meals[i].strMeal}">
                     <div class="overlay">
                         <h2 class="card-title"><strong>${meals[i].strMeal}</strong></h2>
@@ -330,7 +371,6 @@ function displayMeals(meals) {
     }
     myData.innerHTML = cartona;
 }
-
 
 //   Contacts
 
