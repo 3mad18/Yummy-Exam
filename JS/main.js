@@ -93,6 +93,25 @@ async function showMealDetails(mealId) {
 }
 
 
+function displayMeals(meals) {
+    if (!myData) return;
+    console.log('Displaying meals:', meals);
+
+    let cartona = '';
+    for (let i = 0; i < meals.length; i++) {
+        cartona += `
+            <div class="col-md-3">
+                <div class="image-container mb-3 rounded-3" onclick="showMealDetails('${meals[i].idMeal}')">
+                    <img src="${meals[i].strMealThumb}" class="card-img-top" alt="${meals[i].strMeal}">
+                    <div class="overlay">
+                        <h2 class="card-title"><strong>${meals[i].strMeal}</strong></h2>
+                    </div>
+                </div>
+            </div>`;
+    }
+    myData.innerHTML = cartona;
+}
+
 // Categories
 
 
@@ -352,25 +371,6 @@ async function searchByFLetter(term) {
 
 }
 
-
-function displayMeals(meals) {
-    if (!myData) return;
-    console.log('Displaying meals:', meals);
-
-    let cartona = '';
-    for (let i = 0; i < meals.length; i++) {
-        cartona += `
-            <div class="col-md-3">
-                <div class="image-container mb-3 rounded-3" onclick="showMealDetails('${meals[i].idMeal}')">
-                    <img src="${meals[i].strMealThumb}" class="card-img-top" alt="${meals[i].strMeal}">
-                    <div class="overlay">
-                        <h2 class="card-title"><strong>${meals[i].strMeal}</strong></h2>
-                    </div>
-                </div>
-            </div>`;
-    }
-    myData.innerHTML = cartona;
-}
 
 //   Contacts
 
